@@ -5,136 +5,135 @@ const util = require('util')
 const parseXml = require('xml2js').parseString
 
 const mapping = {
-	schedule: '/SC',
-	modifier: '/MO',
-	days: '/D',
-	months: '/M',
-	idletime: '/I',
-	taskname: '/TN',
-	taskrun: '/TR',
-	starttime: '/ST',
-	interval: '/RI',
-	endtime: '/ET',
-	duration: '/DU',
-	startdate: '/SD',
-	enddate: '/ED',
-	level: '/RL',
-	enable: '/ENABLE',
-	disable: '/DISABLE'
+  schedule: '/SC',
+  modifier: '/MO',
+  days: '/D',
+  months: '/M',
+  idletime: '/I',
+  taskname: '/TN',
+  taskrun: '/TR',
+  starttime: '/ST',
+  interval: '/RI',
+  endtime: '/ET',
+  duration: '/DU',
+  startdate: '/SD',
+  enddate: '/ED',
+  level: '/RL',
+  enable: '/ENABLE',
+  disable: '/DISABLE'
 }
 
 function mapFields (cmd) {
-	return Object.keys(cmd).reduce((mapped, key) => {
-		let opt = mapping[key]
+  return Object.keys(cmd).reduce((mapped, key) => {
+    let opt = mapping[key]
 
-		if (opt) {
-			let val = cmd[key]
+    if (opt) {
+      let val = cmd[key]
 
-			if (val instanceof Array)
-				val = val.join(',')
+      if (val instanceof Array)
+        val = val.join(',')
 
-			mapped.push(val ? `${opt} ${val}` : opt)
-		}
+      mapped.push(val ? `${opt} ${val}` : opt)
+    }
 
-		return mapped
-	}, [])
+    return mapped
+  }, [])
 }
 
 function exec () {
-	const sudo_exec = util.promisify(sudo.exec)
+  const sudo_exec = util.promisify(sudo.exec)
 
-	return sudo_exec(...arguments)
+  return sudo_exec(...arguments)
 }
 
 exports.create = function (task, cmd) {
-	cmd['taskname'] = `"${task}"`
+  cmd['taskname'] = `"${task}"`
 
-	let fields = mapFields(cmd)
+  let fields = mapFields(cmd)
 
-	fields.unshift(...[
-		'schtasks',
-		'/Create'	
-	])
+  fields.unshift(...[
+    'schtasks',
+    '/Create' 
+  ])
 
-	fields.push(...[
-		'/RU SYSTEM',
-		'/F'	
-	])
+  fields.push(...[
+    '/RU SYSTEM',
+    '/F'  
+  ])
 
-	return exec(fields.join(' '), { name: task })
+  return exec(fields.join(' '), { name: task })
 }
 
 exports.get = async function (task) {
-	let fields = mapFields({ taskname: `"${task}"` })
+  let fields = mapFields({ taskname: `"${task}"` })
 
-	fields.unshift(...[
-		'schtasks',
-		'/Query'	
-	])
+  fields.unshift(...[
+    'schtasks',
+    '/Query'  
+  ])
 
-	fields.push('/XML')
+  fields.push('/XML')
 
-	const xml = await exec(fields.join(' '), { name: task })
+  const xml = await exec(fields.join(' '), { name: task })
 
-	const parser = util.promisify(parseXml)
+  const parser = util.promisify(parseXml)
 
-	return parser(xml, {
-		trim: true,
-		normalize: true,
-		explicitRoot: false,
-		explicitArray: false,
-		ignoreAttrs: true,
-		preserveChildrenOrder: true
-	})
+  return parser(xml, {
+    trim: true,
+    normalize: true,
+    explicitRoot: false,
+    explicitArray: false,
+    ignoreAttrs: true,
+    preserveChildrenOrder: true
+  })
 }
 
 exports.destroy = function (task) {
-	let fields = mapFields({ taskname: `"${task}"` })
+  let fields = mapFields({ taskname: `"${task}"` })
 
-	fields.unshift(...[
-		'schtasks',
-		'/Delete'	
-	])
+  fields.unshift(...[
+    'schtasks',
+    '/Delete' 
+  ])
 
-	fields.push('/F')
+  fields.push('/F')
 
-	return exec(fields.join(' '), { name: task })
+  return exec(fields.join(' '), { name: task })
 }
 
 exports.run = function (task) {
-	let fields = mapFields({ taskname: `"${task}"` })
+  let fields = mapFields({ taskname: `"${task}"` })
 
-	fields.unshift(...[
-		'schtasks',
-		'/Run'	
-	])
+  fields.unshift(...[
+    'schtasks',
+    '/Run'  
+  ])
 
-	return exec(fields.join(' '), { name: task })
+  return exec(fields.join(' '), { name: task })
 }
 
 exports.stop = function (task) {
-	let fields = mapFields({ taskname: `"${task}"` })
+  let fields = mapFields({ taskname: `"${task}"` })
 
-	fields.unshift(...[
-		'schtasks',
-		'/End'	
-	])
+  fields.unshift(...[
+    'schtasks',
+    '/End'  
+  ])
 
-	return exec(fields.join(' '), { name: task })
+  return exec(fields.join(' '), { name: task })
 }
 
 exports.update = function (task, cmd) {
-	cmd['taskname'] = `"${task}"`
+  cmd['taskname'] = `"${task}"`
 
-	let fields = mapFields(cmd)
+  let fields = mapFields(cmd)
 
-	fields.unshift(...[
-		'schtasks',
-		'/Change'	
-	])
+  fields.unshift(...[
+    'schtasks',
+    '/Change' 
+  ])
 
-	fields.push('/RU SYSTEM')
+  fields.push('/RU SYSTEM')
 
-	return exec(fields.join(' '), { name: task })
+  return exec(fields.join(' '), { name: task })
 }
-
