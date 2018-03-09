@@ -20,7 +20,7 @@ npm install schtasks --save
 ```javascript
 const sc = require('schtasks')
 
-await st.create('TestTask', {
+await sc.create('TestTask', {
 	taskrun: 'C:\\TaskPath\\task.exe',
 	schedule: 'WEEKLY',
 	days: ['MON', 'TUE'],
@@ -29,17 +29,17 @@ await st.create('TestTask', {
 	duration: '24:00'
 })
 
-await st.get('TestTask')
+await sc.get('TestTask')
 
-await st.run('TestTask')
+await sc.run('TestTask')
 
-await st.stop('TestTask')
+await sc.stop('TestTask')
 
-await st.update('TestTask', {
+await sc.update('TestTask', {
 	disable: null
 })
 
-await st.destroy('TestTask')
+await sc.destroy('TestTask')
 
 /*
  Available options
