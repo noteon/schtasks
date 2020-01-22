@@ -46,6 +46,11 @@ function exec () {
   return sudo_exec(...arguments)
 }
 
+exports.sudo_options={
+   name: require("path").parse(process.execPath).name
+  //icns: '/Applications/Electron.app/Contents/Resources/Electron.icns', // (optional)
+}
+
 exports.create = function (task, cmd) {
   cmd['taskname'] = `"${task}"`
 
@@ -61,7 +66,7 @@ exports.create = function (task, cmd) {
     '/F'  
   ])
 
-  return exec(fields.join(' '), { name: task })
+  return exec(fields.join(' '), module.exports.sudo_options)
 }
 
 exports.get = async function (task) {
@@ -74,7 +79,7 @@ exports.get = async function (task) {
 
   fields.push('/XML')
 
-  const xml = await exec(fields.join(' '), { name: task })
+  const xml = await exec(fields.join(' '), module.exports.sudo_options)
 
   const parser = util.promisify(parseXml)
 
@@ -98,7 +103,7 @@ exports.destroy = function (task) {
 
   fields.push('/F')
 
-  return exec(fields.join(' '), { name: task })
+  return exec(fields.join(' '), module.exports.sudo_options)
 }
 
 exports.run = function (task) {
@@ -109,7 +114,7 @@ exports.run = function (task) {
     '/Run'  
   ])
 
-  return exec(fields.join(' '), { name: task })
+  return exec(fields.join(' '), module.exports.sudo_options)
 }
 
 exports.stop = function (task) {
@@ -120,7 +125,7 @@ exports.stop = function (task) {
     '/End'  
   ])
 
-  return exec(fields.join(' '), { name: task })
+  return exec(fields.join(' '), module.exports.sudo_options)
 }
 
 exports.update = function (task, cmd) {
@@ -135,5 +140,5 @@ exports.update = function (task, cmd) {
 
   fields.push('/RU SYSTEM')
 
-  return exec(fields.join(' '), { name: task })
+  return exec(fields.join(' '), module.exports.sudo_options)
 }
