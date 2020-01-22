@@ -1,6 +1,6 @@
 {
   "name": "qh-schtasks",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0",
   "description": "Windows scheduled tasks",
   "main": "index.js",
   "scripts": {

@@ -20,7 +20,9 @@ const mapping = {
   enddate: '/ED',
   level: '/RL',
   enable: '/ENABLE',
-  disable: '/DISABLE'
+  disable: '/DISABLE',
+
+  xml: '/XML', //added by qinghai
 }
 
 function mapFields (cmd) {
