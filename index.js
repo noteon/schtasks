@@ -21,6 +21,7 @@ const mapping = {
   level: '/RL',
   enable: '/ENABLE',
   disable: '/DISABLE',
+  runAsUser:'/RU',
 
   xml: '/XML', //added by qinghai
 }
@@ -64,7 +65,7 @@ exports.create = function (task, cmd) {
   ])
 
   fields.push(...[
-    '/RU SYSTEM',
+    //'/RU SYSTEM',
     '/F'  
   ])
 
@@ -140,7 +141,7 @@ exports.update = function (task, cmd) {
     '/Change' 
   ])
 
-  fields.push('/RU SYSTEM')
+  //fields.push('/RU SYSTEM')
 
   return exec(fields.join(' '), module.exports.sudo_options)
 }
